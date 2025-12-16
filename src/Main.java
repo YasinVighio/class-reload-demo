@@ -28,10 +28,7 @@ public class Main {
         System.out.println("After second reload: " + Config.configName);
     }
 
-    /**
-     * Copies all static fields (including final fields) from source to target class.
-     * Handles Java 8–16 via modifiers hack and Java 17+ via getDeclaredFields0 workaround.
-     */
+
     private static void copyStaticFields(Class<?> source, Class<?> target) throws Exception {
         int javaVersion = getJavaMajorVersion();
 
@@ -44,7 +41,7 @@ public class Main {
                 targetField.setAccessible(true);
 
                 if (javaVersion > 8) {
-                    setFinalStaticJava17(targetField, value);
+                    setFinalStaticJava8Plus(targetField, value);
                 } else {
                     setFieldViaModifiers(targetField, value);
                 }
@@ -52,9 +49,7 @@ public class Main {
         }
     }
 
-    /**
-     * Modifiers hack for Java 8–16 (removes final flag and sets value)
-     */
+
     private static void setFieldViaModifiers(Field field, Object value) throws Exception {
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -63,10 +58,8 @@ public class Main {
         field.set(null, value);
     }
 
-    /**
-     * Workaround for Java 17+ where 'modifiers' field is removed
-     */
-    private static void setFinalStaticJava17(Field field, Object newValue) throws Exception {
+
+    private static void setFinalStaticJava8Plus(Field field, Object newValue) throws Exception {
         field.setAccessible(true);
 
         // Access private Field fields via getDeclaredFields0
