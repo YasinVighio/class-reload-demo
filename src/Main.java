@@ -1,3 +1,6 @@
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 public class Main {
     public static void main(String[] args) throws Exception {
         Context.configType = 1;
@@ -22,16 +25,22 @@ public class Main {
         System.out.println("After second reload: " + Config.configName); // config 2
     }
 
-    // Copies all static fields from source class to target class
     private static void copyStaticFields(Class<?> source, Class<?> target) throws Exception {
-        java.lang.reflect.Field[] fields = source.getDeclaredFields();
-        for (java.lang.reflect.Field f : fields) {
-            if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
+        for (Field f : source.getDeclaredFields()) {
+            if (Modifier.isStatic(f.getModifiers())) {
                 f.setAccessible(true);
-                java.lang.reflect.Field targetField = target.getDeclaredField(f.getName());
+
+                Field targetField = target.getDeclaredField(f.getName());
                 targetField.setAccessible(true);
+
+                // Remove final modifier if present
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(targetField, targetField.getModifiers() & ~Modifier.FINAL);
+
                 targetField.set(null, f.get(null));
             }
         }
     }
+
 }
