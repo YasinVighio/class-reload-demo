@@ -6,5 +6,5 @@ public class Config {
         configId=Context.configType;
     }
 
-    public static String configName = configId == 1 ? "config 1": "config 2";
+    public final static String configName = configId == 1 ? "config 1": "config 2";
 }
