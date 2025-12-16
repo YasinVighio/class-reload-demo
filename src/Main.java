@@ -3,7 +3,7 @@ public class Main {
         Context.configType = 1;
 
         // First load
-        ConfigLoader loader1 = new ConfigLoader("out/production/class-reload-demo");
+        ConfigLoader loader1 = new ConfigLoader("out/production/class-reload-demo"); //compile path
         Class<?> reloaded1 = loader1.loadClass("Config");
 
         // Copy static fields to original Config
